@@ -13,9 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from importlib.util import find_spec
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, reverse_lazy
+from django.views.generic import RedirectView
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', RedirectView.as_view(url=reverse_lazy('home')))
 ]
+
+
+for app in settings.MENUEXAMPLE_APPS:
+    mod = app + '.urls'
+    if find_spec(mod):
+        urlpatterns.append(path(app + '/', include(mod)))
